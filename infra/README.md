@@ -1,0 +1,1 @@
+This application is deployed via Lambda and EventBridge.

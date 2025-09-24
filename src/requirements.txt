@@ -4,3 +4,15 @@
 #
 #    pip-compile --cert=None --client-cert=None --index-url=None --output-file=requirements.txt --pip-args=None requirements.in
 #
+certifi==2025.8.3
+    # via requests
+charset-normalizer==3.4.3
+    # via requests
+idna==3.10
+    # via requests
+python-dotenv==1.1.1
+    # via -r requirements.in
+requests==2.32.5
+    # via -r requirements.in
+urllib3==2.5.0
+    # via requests

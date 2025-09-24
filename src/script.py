@@ -44,6 +44,7 @@ def authorize_reddit():
 def search_reddit(token: str):
     """make a request to the Reddit search API"""
     query_string = "[FRESH+ALBUM]"
+    album_list = []
 
     # build request. we need to use restrict_sr here to keep the results limited to the subreddit we pass in the request URL
     # without restrict_sr, the Reddit API will return results from all across reddit.
@@ -65,21 +66,19 @@ def search_reddit(token: str):
     resp_data = response.json()
 
     # get all results from the `children` key
-    albums = resp_data["data"]["children"]
+    posts = resp_data["data"]["children"]
 
     # the fields we're interested in are: title, domain, and url_overridden_by_dest
-    for album in albums:
-        info = {}
-        data = album["data"]
-        try:
-            
-            info["title"] = data.get('title', None)
-            info["domain"] = data.get('domain', None)
-            info["url_overridden_by_dest"] = data.get('url_overridden_by_dest', None)
-        except KeyError:
-            continue
-        finally:
-            print(info)
+    for post in posts:
+        data = post["data"]    
+        title = data.get('title', None)
+        domain = data.get('domain', None)
+        url_overridden_by_dest = data.get('url_overridden_by_dest', None)
+
+        album = Album(title=title, domain=domain, url_override=url_overridden_by_dest)
+        album_list.append(album)
+
+        print(album.name)
 
 
 def search_spotify():

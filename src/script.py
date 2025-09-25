@@ -6,7 +6,8 @@
 import requests
 import requests.auth
 import os
-import json
+import html
+import re
 from dotenv import load_dotenv
 from classes import Album
 
@@ -42,7 +43,15 @@ def authorize_reddit():
 
 
 def search_reddit(token: str):
-    """make a request to the Reddit search API"""
+    """
+    make a request to the Reddit search API
+
+    args:
+        token (str): the access token used to authenticate to the api
+
+    returns:
+        list: a list of Album objects
+    """
     query_string = "[FRESH+ALBUM]"
     album_list = []
 
@@ -68,17 +77,45 @@ def search_reddit(token: str):
     # get all results from the `children` key
     posts = resp_data["data"]["children"]
 
-    # the fields we're interested in are: title, domain, and url_overridden_by_dest
+    # the fields we're interested in are: title, artist, domain, and url_overridden_by_dest
+    # TODO: create function to clean up the title (e.g. remove FRESH, url encoding, etc)
     for post in posts:
-        data = post["data"]    
-        title = data.get('title', None)
-        domain = data.get('domain', None)
-        url_overridden_by_dest = data.get('url_overridden_by_dest', None)
+        data = post["data"]
+        title, artist = get_title_and_artist(data.get("title", None))
+        domain = data.get("domain", None)
+        url_overridden_by_dest = data.get("url_overridden_by_dest", None)
 
-        album = Album(title=title, domain=domain, url_override=url_overridden_by_dest)
+        album = Album(
+            title=title,
+            artist=artist,
+            domain=domain,
+            url_override=url_overridden_by_dest,
+        )
         album_list.append(album)
 
-        print(album.name)
+        print(f"Album: {album.title}, Artist: {album.artist}")
+
+    return album_list
+
+
+def get_title_and_artist(title: str):
+    artist = ""
+    if title is not None:
+        # strip "[FRESH ALBUM]"
+        title = title.replace("[FRESH ALBUM]", "")
+
+        # replace any em dashes with en dashes
+        title = title.replace("–", "-")
+
+        # remove any html-encoded characters
+        title = html.unescape(title)
+
+        # split the title at the en dash
+        split_title = title.split("-")
+        title = split_title[1].strip()
+        artist = split_title[0].strip()
+
+    return title, artist
 
 
 def search_spotify():

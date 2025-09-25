@@ -7,12 +7,12 @@ import requests
 import requests.auth
 import os
 import html
-import re
 from dotenv import load_dotenv
 from classes import Album
 
 REDDIT_API_BASE = "https://oauth.reddit.com"
 REDDIT_USER_AGENT = "spotify-fresh-albums by myshortfriend"
+SPOTIFY_PLAYLIST_ID = ""
 
 
 load_dotenv()
@@ -117,6 +117,8 @@ def get_title_and_artist(title: str):
 
     return title, artist
 
+def authorize_spotify():
+    pass
 
 def search_spotify():
     """make a request to the Spotify search API. Return the status code and the result."""

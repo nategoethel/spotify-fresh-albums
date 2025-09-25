@@ -78,7 +78,6 @@ def search_reddit(token: str):
     posts = resp_data["data"]["children"]
 
     # the fields we're interested in are: title, artist, domain, and url_overridden_by_dest
-    # TODO: create function to clean up the title (e.g. remove FRESH, url encoding, etc)
     for post in posts:
         data = post["data"]
         title, artist = get_title_and_artist(data.get("title", None))

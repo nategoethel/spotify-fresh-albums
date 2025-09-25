@@ -92,7 +92,9 @@ def search_reddit(token: str):
         )
         album_list.append(album)
 
+        # DEBUG
         print(f"Album: {album.title}, Artist: {album.artist}")
+        print(f"url: {album.url_override}")
 
     return album_list
 
@@ -117,15 +119,32 @@ def get_title_and_artist(title: str):
     return title, artist
 
 def authorize_spotify():
+    """returns a token"""
+    client_id = os.getenv("SPOTIFY_APP_CLIENT_ID")
+    client_secret = os.getenv("SPOTIFY_APP_CLIENT_SECRET")
+
+    # build request
+    post_data = {"grant_type": "client_credentials", "client_id": client_id, "client_secret": client_secret}
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+
+    resp = requests.post(
+        "https://accounts.spotify.com/api/token",
+        data=post_data,
+        headers=headers,
+    )
+    resp_data = resp.json()
+    token = resp_data["access_token"]
+
+    return token
+
+def search_spotify(album: Album, token: str):
+    """make a request to the Spotify search API to find albums. Return the status code and the result."""
     pass
 
-def search_spotify():
-    """make a request to the Spotify search API. Return the status code and the result."""
-    pass
 
-
-def add_album_to_playlist(album: Album):
+def add_album_to_playlist(album: Album, token: str):
     """adds the album to a playlist"""
+    # spotify api reference: https://developer.spotify.com/documentation/web-api/reference/add-tracks-to-playlist
     pass
 
 
